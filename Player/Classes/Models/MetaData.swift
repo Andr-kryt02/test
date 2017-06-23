@@ -1,0 +1,43 @@
+//
+//  MetaData.swift
+//  Player
+//
+//  Created by Boris Bondarenko on 6/2/17.
+//  Copyright © 2017 Applikey Solutions. All rights reserved.
+//
+
+import UIKit
+import AVFoundation
+
+class MetaData {
+    var title: String? = "Unknown"
+    var creationDate = Date()
+    var artwork: UIImage? = UIImage(named: "default_cover")
+    var albumName: String? = "Unknown"
+    var artist: String? = "Unknown"
+	var duration: Float64 = 0
+    
+    init?(playerItem: AVPlayerItem?) {
+        guard let playerItem = playerItem else { return }
+        let commonMetadata = playerItem.asset.commonMetadata
+		duration = CMTimeGetSeconds(playerItem.asset.duration)
+
+        for metadataItem in commonMetadata {
+            switch metadataItem.commonKey! {
+            case "title":
+                title = metadataItem.stringValue
+            case "creationDate":
+                break
+            case "artwork":
+                if let imageData = metadataItem.value as? Data {
+                    artwork = UIImage(data: imageData)
+                }
+            case "albumName":
+                albumName = metadataItem.stringValue
+            case "artist":
+                artist = metadataItem.stringValue
+            default: break
+            }
+        }
+    }
+}
